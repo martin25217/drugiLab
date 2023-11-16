@@ -11,7 +11,7 @@ public class Main {
 
         EpsilonAutomat e = new EpsilonAutomat(stavke, loader.pocetniNezavsrniZnak);
 
-        /*System.out.println("Tablica enkodiranja");
+        System.out.println("Tablica enkodiranja");
         for(LRStavka l : e.stanja.keySet()){
             System.out.println(l.toString() + " | " + e.stanja.get(l));
         }
@@ -19,8 +19,12 @@ public class Main {
         System.out.println("Evo tranzicija");
         for(Tranzicije t : e.funkcijaTranzicije){
             System.out.println(t.toString());
-        }*/
+        }
 
         DKAutomat a = new DKAutomat(e);
+
+        for(StanjeDKA s : a.sva_stanja){
+            System.out.println(s.toString());
+        }
     }
 }

@@ -4,10 +4,15 @@ public class Tranzicije {
     String ucitanSimbol;
     int novoStanje;
 
-    public Tranzicije(int pocetnoStanje, String ucitanSimbol, int novoStanje) {
+    LRStavka pocetnaLRStavka;
+    LRStavka konacnaLRStavka;
+
+    public Tranzicije(int pocetnoStanje, String ucitanSimbol, int novoStanje, LRStavka pocetnaLRStavka, LRStavka konacnaLRStavka) {
         this.pocetnoStanje = pocetnoStanje;
         this.ucitanSimbol = ucitanSimbol;
         this.novoStanje = novoStanje;
+        this.pocetnaLRStavka = pocetnaLRStavka;
+        this.konacnaLRStavka = konacnaLRStavka;
     }
 
     @Override

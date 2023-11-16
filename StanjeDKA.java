@@ -10,11 +10,27 @@ public class StanjeDKA {
 
     int brojStanja;
 
-    public StanjeDKA(EpsilonAutomat e, LRStavka l, int brojStanja) {
+    public StanjeDKA(int brojStanja){
         this.brojStanja = brojStanja;
+    }
 
+    public Boolean jelStavkaTu(LRStavka stavka){
+        for(LRStavka l : lr_stavke_stanja){
+            if(l.equals(stavka)) return true;
+        }
+        return false;
+    }
 
-
+    @Override
+    public String toString(){
+        StringBuilder bob = new StringBuilder();
+        bob.append("Stanje " + brojStanja + " {");
+        for(LRStavka l : lr_stavke_stanja){
+            bob.append(l.toString() + ", ");
+        }
+        bob.delete(bob.length() - 3, bob.length());
+        bob.append("}");
+        return bob.toString();
     }
 
 

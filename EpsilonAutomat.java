@@ -29,7 +29,7 @@ public class EpsilonAutomat {
             if(l.desno_od_tocke.split(" ")[0].split("")[0].equals("<")){
                 for(LRStavka pocetakLanca : set){
                     if(pocetakLanca.lijeva_strana_produkcije.equals(l.desno_od_tocke.split(" ")[0]) && pocetakLanca.lijevo_od_tocke.equals("")){
-                        this.funkcijaTranzicije.add(new Tranzicije(this.stanja.get(l), "$", this.stanja.get(pocetakLanca)));
+                        this.funkcijaTranzicije.add(new Tranzicije(this.stanja.get(l), "$", this.stanja.get(pocetakLanca), l, pocetakLanca));
                     }
                 }
             }
@@ -41,7 +41,7 @@ public class EpsilonAutomat {
 
         for(LRStavka l : set){
             if(l.lijeva_strana_produkcije.equals(pocetniNezavrsniZnak) && (l.lijevo_od_tocke.equals("") && !l.desno_od_tocke.equals(""))){
-                this.funkcijaTranzicije.add(new Tranzicije(0, "$", this.stanja.get(l)));
+                this.funkcijaTranzicije.add(new Tranzicije(0, "$", this.stanja.get(l), null, l));
             }
         }
 
@@ -60,7 +60,7 @@ public class EpsilonAutomat {
                 if(jednakostDjelovaLRStavki && nemamoKrug && nemamoDrugiKrug && podudarajuLiSe || jedanZnak){
 
                     generateChain(set, l);
-                    this.funkcijaTranzicije.add(new Tranzicije(stanja.get(pocetak), pocetak.desno_od_tocke.split(" ")[0], stanja.get(l)));
+                    this.funkcijaTranzicije.add(new Tranzicije(stanja.get(pocetak), pocetak.desno_od_tocke.split(" ")[0], stanja.get(l), pocetak, l));
                 }
             }
         }
