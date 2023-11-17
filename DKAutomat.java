@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,32 +13,64 @@ public class DKAutomat {
     HashSet<Tranzicije> funkcija_tranzicije;
 
     public DKAutomat(EpsilonAutomat e){
+        int brojac = 0;
+        //Dodajemo stanje koje je epsilon okolina onog dodatnog pocetnog stanja
+
+        HashSet<Integer> epsilon_okolina_nule = new HashSet<>();
+        epsilon_okolina_nule.add(0);
+        Boolean pomocnik = true;
+
+
+        while(pomocnik){
+            pomocnik = false;
+            HashSet<Integer> epsilon_okolina_nule_temp = (HashSet<Integer>) epsilon_okolina_nule.clone();
+            for(Integer i : epsilon_okolina_nule){
+                for(Tranzicije tr : e.funkcijaTranzicije){
+                    if(i.equals(tr.pocetnoStanje) && tr.ucitanSimbol.equals("$")){
+                        if(epsilon_okolina_nule_temp.add(tr.novoStanje)){
+                            pomocnik = true;
+                        }
+                    }
+                }
+                epsilon_okolina_nule = epsilon_okolina_nule_temp;
+            }
+        }
+        System.out.println(epsilon_okolina_nule);
+
+        StanjeDKA prvo_stanje = new StanjeDKA(brojac++, true);
+        epsilon_okolina_nule.remove(0);
+        epsilon_okolina_nule.stream().map(x-> pronadiKljuc(e.stanja, x)).forEach(x-> prvo_stanje.lr_stavke_stanja.add(x));
+        this.sva_stanja.add(prvo_stanje);
+
 
         List<LRStavka> lista =  e.stanja.keySet().stream().filter(x -> x.desno_od_tocke.split(" ")[0].split("")[0].equals("<")).collect(Collectors.toList());
-        int brojac = 0;
+
 
         //Grupiranje odredenih stavki radi jednostavnosi
         for(LRStavka l : lista){
-            System.out.println("Alo bado eto san iz pocetak__");
-            StanjeDKA stanje = new StanjeDKA(brojac++);
+
+            StanjeDKA stanje = new StanjeDKA(brojac++, false);
+            //U novo stanje DKA dodajemo "izvor" epsilon okoline
             stanje.lr_stavke_stanja.add(l);
-            Boolean bool = true;
-
-            while(bool){
-                bool = false;
-                for(Tranzicije tr : e.funkcijaTranzicije){
-                    if(tr.pocetnoStanje == e.stanja.get(l) && tr.ucitanSimbol.equals("$")){
-                        if(stanje.lr_stavke_stanja.add(tr.konacnaLRStavka)){
-                            bool = true;
-                            System.out.println("Za LRstavku " + tr.pocetnaLRStavka.toString() + " sam dodao u stanje LR stavku: " + tr.konacnaLRStavka.toString());
+            Boolean nismo_gotovi = true;
+            int brojac2 = 0;
+            while(nismo_gotovi) {
+                nismo_gotovi = false;
+                StanjeDKA temp_stanje = stanje.clone();
+                for (LRStavka lr : stanje.lr_stavke_stanja) {
+                    for(Tranzicije tr : e.funkcijaTranzicije){
+                        if(e.stanja.get(lr) == tr.pocetnoStanje && tr.ucitanSimbol.equals("$")){
+                            if(temp_stanje.lr_stavke_stanja.add(tr.konacnaLRStavka)) nismo_gotovi = true;
                         }
-
-
                     }
-
                 }
+                stanje = temp_stanje;
+
+
             }
+
             sva_stanja.add(stanje);
+
         }
 
         //Sad moramo dodati one epsilon prijelaze koje još nismo
@@ -51,11 +84,32 @@ public class DKAutomat {
                 }
             }
             if(nemamo_momka_u_nekom_od_stanja){
-                StanjeDKA novo_stanje = new StanjeDKA(brojac++);
+                StanjeDKA novo_stanje = new StanjeDKA(brojac++, false);
                 novo_stanje.lr_stavke_stanja.add(lr);
                 this.sva_stanja.add(novo_stanje);
             }
         }
+
+        HashSet<StanjeDKA> sva_stanja_temp = (HashSet<StanjeDKA>) this.sva_stanja.clone();
+        for(StanjeDKA stanje1 : this.sva_stanja){
+            for(StanjeDKA stanje2 : this.sva_stanja){
+                if(stanje1.isASubset(stanje2) && !stanje1.je_pocetno) sva_stanja_temp.remove(stanje1);
+            }
+        }
+        this.sva_stanja = sva_stanja_temp;
+
+
+        //Ode treba dodat konverziju tranzicjia nedeterminističkog konačnog automata s
+        //epsilon prijelazima u tranzicjie determinističkog konačnog automata
+        //U riječima premudrog Jagušta, VIKI DO YOUR KUNG FU
+
+    }
+
+    public LRStavka pronadiKljuc(HashMap<LRStavka,Integer> mapa, int i){
+        for(LRStavka lr : mapa.keySet()){
+            if(mapa.get(lr).equals(i)) return lr;
+        }
+        return null;
 
     }
 

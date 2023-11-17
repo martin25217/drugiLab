@@ -13,6 +13,7 @@ public class EpsilonAutomat {
 
     public EpsilonAutomat(Set<LRStavka> set, String pocetniNezavrsniZnak){
         int brojac = 1;
+
         for(LRStavka l : set){
             stanja.put(l, brojac++);
         }
@@ -38,9 +39,8 @@ public class EpsilonAutomat {
         this.pocetnaStanja.add(0);
 
         //Spajamo dodatno pocetno stanje na ostatak automata
-
         for(LRStavka l : set){
-            if(l.lijeva_strana_produkcije.equals(pocetniNezavrsniZnak) && (l.lijevo_od_tocke.equals("") && !l.desno_od_tocke.equals(""))){
+            if(l.lijeva_strana_produkcije.equals(pocetniNezavrsniZnak) && (l.lijevo_od_tocke.equals("") /*&& !l.desno_od_tocke.equals("")*/)){
                 this.funkcijaTranzicije.add(new Tranzicije(0, "$", this.stanja.get(l), null, l));
             }
         }
