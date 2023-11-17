@@ -1,7 +1,4 @@
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DKAutomat {
@@ -35,7 +32,7 @@ public class DKAutomat {
                 epsilon_okolina_nule = epsilon_okolina_nule_temp;
             }
         }
-        System.out.println(epsilon_okolina_nule);
+        //System.out.println(epsilon_okolina_nule);
 
         StanjeDKA prvo_stanje = new StanjeDKA(brojac++, true);
         epsilon_okolina_nule.remove(0);
@@ -102,7 +99,31 @@ public class DKAutomat {
         //Ode treba dodat konverziju tranzicjia nedeterminističkog konačnog automata s
         //epsilon prijelazima u tranzicjie determinističkog konačnog automata
         //U riječima premudrog Jagušta, VIKI DO YOUR KUNG FU
+        this.funkcija_tranzicije = new HashSet<>();
 
+        HashMap<Integer, LRStavka> stavkice = obrni(e);
+        for(Tranzicije tr : e.funkcijaTranzicije){
+            Set<Integer> listaPrvih = new HashSet<>();
+            for(StanjeDKA s : sva_stanja){
+                if(s.lr_stavke_stanja.contains(stavkice.get(tr.pocetnoStanje))) listaPrvih.add(s.brojStanja);
+            }
+            Set<Integer> listaDrugih = new HashSet<>();
+            for(StanjeDKA s : sva_stanja){
+                if(s.lr_stavke_stanja.contains(stavkice.get(tr.novoStanje))) listaDrugih.add(s.brojStanja);
+            }
+            for(int p : listaPrvih){
+                for(int d : listaDrugih){
+                    if(!tr.ucitanSimbol.equals("$"))funkcija_tranzicije.add(new Tranzicije(p, tr.ucitanSimbol, d, stavkice.get(p), stavkice.get(d)));
+                }
+            }
+        }
+
+    }
+
+    public HashMap<Integer, LRStavka> obrni(EpsilonAutomat e){
+        HashMap<Integer, LRStavka> res = new HashMap<>();
+        for(LRStavka l : e.stanja.keySet()) res.put(e.stanja.get(l), l);
+        return  res;
     }
 
     public LRStavka pronadiKljuc(HashMap<LRStavka,Integer> mapa, int i){
