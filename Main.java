@@ -16,12 +16,14 @@ public class Main {
         }*/
 
         DKAutomat a = new DKAutomat(e);
-        for(StanjeDKA s : a.sva_stanja){
+        /*for(StanjeDKA s : a.sva_stanja){
             System.out.println(s.toString());
         }
-        System.out.println(e.funkcijaTranzicije.size());
+        System.out.println(a.sva_stanja.size() + " " + a.funkcija_tranzicije.size());
         for(Tranzicije s : a.funkcija_tranzicije){
             System.out.println(s.toString());
-        }
+        }*/
+
+        TablicaLRParsera tablica = new TablicaLRParsera(a, loader);
     }
 }
