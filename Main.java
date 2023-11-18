@@ -25,5 +25,7 @@ public class Main {
         }*/
 
         TablicaLRParsera tablica = new TablicaLRParsera(a, loader);
+
+        tablica.printajTablicuNS();
     }
 }

@@ -10,6 +10,10 @@ public class LRStavka{
     public String lijeva_strana_produkcije;
     public String lijevo_od_tocke;
     public String desno_od_tocke;
+
+    public Boolean potpuna = false;
+
+
     int redniBrojStavke;
 
 
@@ -53,7 +57,7 @@ public class LRStavka{
         }
         this.desno_od_tocke = bob.toString();
 
-
+        if(this.desno_od_tocke.isEmpty()) this.potpuna = true;
 
     }
 
@@ -63,6 +67,8 @@ public class LRStavka{
 
         for(int i = 0; i < p.duljina_desne_strane; i++){
             LRStavka lr = new LRStavka(p,i, p.redniBrojProdukcije);
+            if(lr.lijevo_od_tocke.equals("")) lr.potpuna = true;
+            else lr.potpuna = false;
             resultat.add(lr);
         }
 

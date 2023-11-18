@@ -1,4 +1,6 @@
 import java.util.HashMap;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TablicaLRParsera {
 
@@ -45,18 +47,36 @@ public class TablicaLRParsera {
             }
         }
 
+        for(Tranzicije t : a.funkcija_tranzicije){
+            System.out.println(t.toString());
+        }
+
         //tablica novog stanja
         for(Tranzicije t : a.funkcija_tranzicije){
             //tablica novog stanja
             if(t.ucitanSimbol.startsWith("<")){
                 tablicaNovogStanja[nezavrsniZnakovi.get(t.ucitanSimbol)][t.pocetnoStanje] = "S" + t.novoStanje;
             }
-            else{
-                //tablica akcija
-                //MARTINE POMAGAJ NE ZNAM VISE
-            }
         }
 
+        //Dodavanje redukcija u tablicu akcija
+        for(StanjeDKA stanje : a.sva_stanja){
+            stanje.
+        }
+
+        //Sad ide tablica akcija
+        for(Tranzicije t : a.funkcija_tranzicije){
+            for(StanjeDKA s: a.sva_stanja ){
+                if(t.pocetnoStanje == s.brojStanja){
+                    System.out.println("Za stanje " + s.toString() + " i tranziciju " + t.toString());
+                    Set<LRStavka> set = s.lr_stavke_stanja.stream().filter(x-> (this.zavrsniZnakovi.containsKey(x.desno_od_tocke.split(" ")[0]) &&  x.desno_od_tocke.split(" ")[0].equals(t.ucitanSimbol))).collect(Collectors.toSet());
+                    //ako set.size nije 1 onda imamo nejednoznacnost koju treba razrijesiti
+                    for(LRStavka stavka : set){
+                        System.out.println(stavka.toString());
+                    }
+                }
+            }
+        }
     }
 
     public void printajTablicuNS(){
@@ -69,5 +89,4 @@ public class TablicaLRParsera {
             System.out.println(izlaz);
         }
     }
-
 }
