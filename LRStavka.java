@@ -10,6 +10,7 @@ public class LRStavka{
     public String lijeva_strana_produkcije;
     public String lijevo_od_tocke;
     public String desno_od_tocke;
+    public HashSet<String> zapocinje;
 
     public Boolean potpuna = false;
 
@@ -21,11 +22,13 @@ public class LRStavka{
         this.redniBrojStavke = redniBrojStavke;
         this.lijeva_strana_produkcije = p.lijeva_strana_produkcije;
 
+        this.zapocinje = new HashSet<>();
 
         if(p.desna_strana_produkcije.equals(" $")){
 
             this.desno_od_tocke ="";
             this.lijevo_od_tocke ="";
+            this.zapocinje = p.zapocinje;
             return;
         }
 
@@ -59,6 +62,8 @@ public class LRStavka{
 
         if(this.desno_od_tocke.isEmpty()) this.potpuna = true;
 
+        this.zapocinje = p.zapocinje;
+
     }
 
     public static HashSet<LRStavka> generirajLRStavke(Produkcija p){
@@ -77,7 +82,7 @@ public class LRStavka{
 
     @Override
     public String toString(){
-        return lijeva_strana_produkcije + " -> " + lijevo_od_tocke + " * " + desno_od_tocke;
+        return lijeva_strana_produkcije + " -> " + lijevo_od_tocke + " * " + desno_od_tocke + " | " + zapocinje;
     }
 
     @Override

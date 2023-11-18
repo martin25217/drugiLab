@@ -1,7 +1,4 @@
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Loader {
 
@@ -10,6 +7,9 @@ public class Loader {
     public Set<String> sinkronizacijski_znakovi = new TreeSet<>();
 
     public Set<Produkcija> produkcije = new HashSet<>();
+    public String[][] zapIzrZn;
+    public String[][] zapZn;
+    public HashMap<String, HashSet<String>> zap;
 
     public String pocetniNezavsrniZnak;
 
@@ -55,8 +55,82 @@ public class Loader {
             }
         }
 
+        //zapocinjeIzravnoZnakom
+        this.zapIzrZn = new String[nezavrsni_znakovi.size()][nezavrsni_znakovi.size() + zavrsni_znakovi.size()];
+        for(int i = 0; i < nezavrsni_znakovi.size(); i++){
+            for(int j = 0; j < nezavrsni_znakovi.size() + zavrsni_znakovi.size(); j++){
+                zapIzrZn[i][j] = "NE";
+            }
+        }
+        List<String> nezav = this.nezavrsni_znakovi.stream().toList();
+        List<String> zav = this.zavrsni_znakovi.stream().toList();
+        for(Produkcija p : this.produkcije){
+            if(nezav.contains(p.desna_strana_produkcije.split(" ")[1])){
+                zapIzrZn[nezav.indexOf(p.lijeva_strana_produkcije)][nezav.indexOf(p.desna_strana_produkcije.split(" ")[1])] = "DA";
+            }else if(zav.contains(p.desna_strana_produkcije.split(" ")[1])){
+                zapIzrZn[nezav.indexOf(p.lijeva_strana_produkcije)][nezav.size() + zav.indexOf(p.desna_strana_produkcije.split(" ")[1])] = "DA";
+            }
+        }
+        //zapocinjeZnakom
+        this.zapZn = new String[nezav.size() + zav.size()][nezav.size() + zav.size()];
+        for(int i = 0; i < nezavrsni_znakovi.size() + zav.size(); i++){
+            for(int j = 0; j < nezavrsni_znakovi.size() + zavrsni_znakovi.size(); j++){
+               zapZn[i][j] = "NE";
+            }
+        }
+        boolean promjena = true;
+        while(promjena){
+            promjena = false;
+            for(int i = 0; i < nezav.size(); i++){
+                for(int j = 0; j < nezav.size() + zav.size(); j++){
+                    if(this.zapIzrZn[i][j].equals("DA")){
+                        for(int k = 0; k < nezav.size() + zav.size(); k++){
+                            if(j < nezav.size() && this.zapIzrZn[j][k].equals("DA") && this.zapZn[i][k].equals("NE")){
+                                zapZn[i][k] = "DA";
+                                promjena = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for(int i = 0; i < nezavrsni_znakovi.size(); i++){
+            for(int j = 0; j < nezav.size() + zavrsni_znakovi.size(); j++){
+                if(this.zapIzrZn[i][j].equals("DA")) this.zapZn[i][j] = "DA";
+            }
+        }
+        //zapocinje
+        this.zap = new HashMap<>();
+        for(String n : nezav){
+            HashSet<String> skup = new HashSet<>();
+            for(int i = nezav.size(); i < nezav.size() + zav.size(); i++){
+                if(this.zapZn[nezav.indexOf(n)][i].equals("DA")) skup.add(zav.get(i - nezav.size()));
+            }
+            this.zap.put(n, skup);
+        }
+        //zapocinjeZaProdukcije
+        promjena = true;
+        while(promjena){
+            promjena = false;
+            for(Produkcija p : this.produkcije){
+                List<String> desno = Arrays.stream(p.desna_strana_produkcije.substring(1).split(" ")).toList();
+                int i = 0;
+                while(nezav.contains(desno.get(i))){
+                    HashSet<String> helpMe = zap.get(desno.get(i));
+                    for(String s : helpMe) {
+                        HashSet<String> pom = zap.get(p.lijeva_strana_produkcije);
+                        if(pom.add(s)) promjena = true;
+                        zap.put(p.lijeva_strana_produkcije, pom);
+                    }
+                    i++;
+                }
+            }
+        }
 
-
+        for(Produkcija p : this.produkcije){
+            p.zapocinje = zap.get(p.lijeva_strana_produkcije);
+        }
 
     }
+
 }

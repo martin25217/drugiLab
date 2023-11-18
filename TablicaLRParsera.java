@@ -61,7 +61,7 @@ public class TablicaLRParsera {
 
         //Dodavanje redukcija u tablicu akcija
         for(StanjeDKA stanje : a.sva_stanja){
-            stanje.
+           // stanje.
         }
 
         //Sad ide tablica akcija
