@@ -28,7 +28,7 @@ public class LRParser{
 
         String[] lrStavke = new String[br + 1];
         for(Produkcija l : ListaProdukcija){
-            lrStavke[l.redniBrojProdukcije] = l.lijeva_strana_produkcije + " -> " + l.desna_strana_produkcije;
+            lrStavke[l.redniBrojProdukcije] = l.lijeva_strana_produkcije + " ->" + l.desna_strana_produkcije;
         }
 
 
@@ -39,37 +39,39 @@ public class LRParser{
             String currState = stog.peek();
             String currSimbol = input.get(inputIndex)[0];
             String akcija = tablicaAkcije[zavrsnaStanja.get(currSimbol)][Integer.parseInt(currState)];
-            System.out.println(akcija);
             if(akcija.startsWith("P")){
                 stog.push(currSimbol);
                 stog.push(akcija.substring(1));
                 inputIndex++;
-                String lookahead = input.get(inputIndex)[0];
+                /*String lookahead = input.get(inputIndex)[0];
                 for(Produkcija p : ListaProdukcija){
                     if(p.zapocinje.contains(lookahead)) break;
-                    else if(p.zapocinje.contains("$"))
-                }
+                    else if(p.zapocinje.contains("$"));
+                }*/
             }else if(akcija.startsWith("R")){//ovdje treba provjeriti substringove kad napravis ucitavanje
                 Integer pravilo = Integer.parseInt(akcija.substring(1));
                 Stack<String> pomocni = new Stack<>();
-                for(int i = 0; i < lrStavke[pravilo].split(" ").length - 2; i++){
-                    stog.pop();
-                    pomocni.push(stog.pop());
-                }
+                if(!lrStavke[pravilo].split(" ")[2].equals("$")){
+                    for(int i = 0; i < lrStavke[pravilo].split(" ").length - 2; i++){
+                        stog.pop();
+                        pomocni.push(stog.pop());
+                    }
+                }else pomocni.push("$");
                 TreeNode roditelj = new TreeNode(lrStavke[pravilo].split(" ")[0]);
+                roditelj.setData(lrStavke[pravilo].split(" ")[0]);
                 for(int i = 0; i < pomocni.size(); i++){
-                    if(generativnoStablo.getData().equals(pomocni.peek())){
+                    if(generativnoStablo.getData() != null && generativnoStablo.getData().equals(pomocni.peek())){
                         roditelj.addChild(this.generativnoStablo);
                     }else{
                         roditelj.addChild(new TreeNode(pomocni.pop()));
                     }
                 }
                 String stanje = stog.peek();
-                String novoStanje = tablicaNovoStanje[Integer.parseInt(stanje)][zavrsnaStanja.get(roditelj.getData())];
+                String novoStanje = tablicaNovoStanje[nezavrsnaStanja.get(roditelj.getData())][Integer.parseInt(stanje)];
                 stog.push(roditelj.getData());
                 stog.push(novoStanje.substring(1));
                 generativnoStablo = roditelj;
-            }else if(akcija.equals("Prihvaca")){
+            }else if(akcija.equals("Okay")){
                 TreeNode roditelj = new TreeNode(stog.peek());
                 roditelj.addChild(generativnoStablo);
                 generativnoStablo = roditelj;

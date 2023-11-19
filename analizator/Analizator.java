@@ -36,7 +36,7 @@ public class Analizator {
             //object1.printajTablicuA();
 
             //object1.printajTablicuNS();
-            
+
 
             parser.nezavrsnaStanja = new HashMap<>();
             parser.zavrsnaStanja = new HashMap<>();

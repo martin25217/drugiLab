@@ -80,7 +80,7 @@ public class TablicaLRParsera  implements Serializable {
         for(StanjeDKA stanje : a.sva_stanja){
            for(LRStavka lr : stanje.lr_stavke_stanja){
                if(lr.potpuna){
-                   for(String str : lr.zapocinje){//Ako bude sranja tu treba gledat
+                   for(String str : this.zavrsniZnakovi.keySet()){//Ako bude sranja tu treba gledat
                        if(this.tablicaAkcija[zavrsniZnakovi.get(str)][stanje.brojStanja].equals("")){
                            this.tablicaAkcija[zavrsniZnakovi.get(str)][stanje.brojStanja] = "R" + lr.redniBrojStavke;
                        }else{
