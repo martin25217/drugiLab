@@ -1,3 +1,5 @@
+package generator;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -8,6 +10,8 @@ public class DKAutomat {
     HashSet<StanjeDKA> sva_stanja = new HashSet<>();
 
     HashSet<Tranzicije> funkcija_tranzicije;
+
+    public HashSet<LRStavka> listaLR;
 
     public DKAutomat(EpsilonAutomat e){
         int brojac = 0;
@@ -117,6 +121,9 @@ public class DKAutomat {
                 }
             }
         }
+
+        this.listaLR = new HashSet<>();
+        this.listaLR.addAll(e.stanja.keySet());
 
     }
 

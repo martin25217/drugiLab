@@ -1,35 +1,55 @@
 package analizator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
-//import "../StanjeDKA.java";
+import generator.LRStavka;
+import generator.Produkcija;
+
+import java.util.*;
+//import "../generator.StanjeDKA.java";
 
 public class LRParser{
-    ArrayList<String> nezavrsnaStanja;
-    ArrayList<String> zavrsnaStanja;
-    String[][] tablicaAkcije;
-    String[][] tablicaNovoStanje;
-    String[] lrStavke;
-    TreeNode generativnoStablo;
+    public HashMap<String, Integer> nezavrsnaStanja;
+    public HashMap<String, Integer> zavrsnaStanja;
+    public String[][] tablicaAkcije;
+    public String[][] tablicaNovoStanje;
+    public HashSet<Produkcija> ListaProdukcija;
+    public String[] sinkronizacijski;
+    public TreeNode generativnoStablo;
+
+
 
     public LRParser(){
         this.generativnoStablo = new TreeNode();
     }
     public void parse(ArrayList<String[]> input){
+        int br = 0;
+        for(Produkcija l : ListaProdukcija){
+            if(l.redniBrojProdukcije > br) br = l.redniBrojProdukcije;
+        }
+
+        String[] lrStavke = new String[br + 1];
+        for(Produkcija l : ListaProdukcija){
+            lrStavke[l.redniBrojProdukcije] = l.lijeva_strana_produkcije + " -> " + l.desna_strana_produkcije;
+        }
+
+
         Stack<String> stog = new Stack<>();
         stog.push("0");
         int inputIndex = 0;
         while(true){
             String currState = stog.peek();
             String currSimbol = input.get(inputIndex)[0];
-            String akcija = tablicaAkcije[Integer.parseInt(currState)][nezavrsnaStanja.indexOf(currSimbol)];//jesu li ovdje nezavrsna stanja -> ERROR
-            if(akcija.equals("Pomakni")){
+            String akcija = tablicaAkcije[zavrsnaStanja.get(currSimbol)][Integer.parseInt(currState)];
+            System.out.println(akcija);
+            if(akcija.startsWith("P")){
                 stog.push(currSimbol);
                 stog.push(akcija.substring(1));
                 inputIndex++;
-            }else if(akcija.equals("Reduciraj")){//ovdje treba provjeriti substringove kad napravis ucitavanje
+                String lookahead = input.get(inputIndex)[0];
+                for(Produkcija p : ListaProdukcija){
+                    if(p.zapocinje.contains(lookahead)) break;
+                    else if(p.zapocinje.contains("$"))
+                }
+            }else if(akcija.startsWith("R")){//ovdje treba provjeriti substringove kad napravis ucitavanje
                 Integer pravilo = Integer.parseInt(akcija.substring(1));
                 Stack<String> pomocni = new Stack<>();
                 for(int i = 0; i < lrStavke[pravilo].split(" ").length - 2; i++){
@@ -45,7 +65,7 @@ public class LRParser{
                     }
                 }
                 String stanje = stog.peek();
-                String novoStanje = tablicaNovoStanje[Integer.parseInt(stanje)][zavrsnaStanja.indexOf(roditelj.getData())];
+                String novoStanje = tablicaNovoStanje[Integer.parseInt(stanje)][zavrsnaStanja.get(roditelj.getData())];
                 stog.push(roditelj.getData());
                 stog.push(novoStanje.substring(1));
                 generativnoStablo = roditelj;

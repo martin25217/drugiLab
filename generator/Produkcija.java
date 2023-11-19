@@ -1,6 +1,9 @@
+package generator;
+
+import java.io.Serializable;
 import java.util.HashSet;
 
-public class Produkcija {
+public class Produkcija implements Serializable {
 
     public String lijeva_strana_produkcije;
     public String desna_strana_produkcije;

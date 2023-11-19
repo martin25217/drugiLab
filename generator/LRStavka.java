@@ -1,26 +1,26 @@
-import com.sun.source.tree.Tree;
+package generator;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.TreeSet;
 
-public class LRStavka{
+public class LRStavka implements Serializable {
 
     public String lijeva_strana_produkcije;
-    public String lijevo_od_tocke;
-    public String desno_od_tocke;
+    public String lijevo_od_tocke = "";
+    public String desno_od_tocke = "";
     public HashSet<String> zapocinje;
 
-    public Boolean potpuna = false;
+    public Boolean potpuna;
 
 
-    int redniBrojStavke;
+    public int redniBrojStavke;
 
 
     public LRStavka(Produkcija p, int x, int redniBrojStavke){
         this.redniBrojStavke = redniBrojStavke;
         this.lijeva_strana_produkcije = p.lijeva_strana_produkcije;
+        this.potpuna = false;
 
         this.zapocinje = new HashSet<>();
 
@@ -29,6 +29,7 @@ public class LRStavka{
             this.desno_od_tocke ="";
             this.lijevo_od_tocke ="";
             this.zapocinje = p.zapocinje;
+            this.potpuna = true;
             return;
         }
 
@@ -60,7 +61,7 @@ public class LRStavka{
         }
         this.desno_od_tocke = bob.toString();
 
-        if(this.desno_od_tocke.isEmpty()) this.potpuna = true;
+
 
         this.zapocinje = p.zapocinje;
 
@@ -72,7 +73,7 @@ public class LRStavka{
 
         for(int i = 0; i < p.duljina_desne_strane; i++){
             LRStavka lr = new LRStavka(p,i, p.redniBrojProdukcije);
-            if(lr.lijevo_od_tocke.equals("")) lr.potpuna = true;
+            if(lr.desno_od_tocke.equals("")) lr.potpuna = true;
             else lr.potpuna = false;
             resultat.add(lr);
         }

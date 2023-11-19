@@ -1,3 +1,5 @@
+package generator;
+
 import java.util.*;
 
 public class Loader {
@@ -28,6 +30,7 @@ public class Loader {
         for(int i = 1; i < string_zavrsnih_znakova.length; i++){
             this.zavrsni_znakovi.add(string_zavrsnih_znakova[i]);
         }
+        this.zavrsni_znakovi.add("$");
 
         String[] string_sinkro_znakova = scanner.nextLine().split(" ");
 
@@ -115,7 +118,7 @@ public class Loader {
             for(Produkcija p : this.produkcije){
                 List<String> desno = Arrays.stream(p.desna_strana_produkcije.substring(1).split(" ")).toList();
                 int i = 0;
-                while(nezav.contains(desno.get(i))){
+                while(i < desno.size() && nezav.contains(desno.get(i))){
                     HashSet<String> helpMe = zap.get(desno.get(i));
                     for(String s : helpMe) {
                         HashSet<String> pom = zap.get(p.lijeva_strana_produkcije);
